@@ -1,0 +1,14 @@
+" olvior's vimrc
+
+runtime config/settings.vim
+
+runtime config/mappings.vim
+
+runtime config/functions.vim
+
+runtime config/autocomplete.vim
+
+runtime config/autocommands.vim
+
+" TODO: Fancy buffers
+
