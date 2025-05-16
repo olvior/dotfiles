@@ -42,8 +42,6 @@ set hlsearch
 set backspace=eol,start,indent
 " set whichwrap+=<,>,h,l
 
-" set hidden
-
 set showcmd
 set wildmenu
 set wildoptions=pum
@@ -53,14 +51,24 @@ set undodir=~/.vim/.undo
 set undofile
 set viminfo='10,\"100,:20,%,n~/.vim/.viminfo
 
+" tab stuff
+" might expand the tabs depending on the detected
+set tabstop=4
 set shiftwidth=4
 set softtabstop=4
-set smarttab
 set autoindent
-set smartindent
+filetype plugin indent on
 
 set nowrap
-set foldcolumn=1
-set showtabline=1
+" set foldcolumn=1
+" set showtabline=1
 
 set hidden
+
+" sus directory netrw stuff
+" disable banner
+let g:netrw_banner=0
+" tree view
+let g:netrw_liststyle=3
+
+

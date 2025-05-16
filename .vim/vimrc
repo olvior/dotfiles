@@ -10,5 +10,5 @@ runtime config/autocomplete.vim
 
 runtime config/autocommands.vim
 
-" TODO: Fancy buffers
+runtime config/ui.vim
 

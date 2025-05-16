@@ -5,6 +5,7 @@
 """ TAB / SNIPPETS
 """
 inoremap <Tab> <Cmd>call Tab()<CR>
+inoremap <S-Tab> <Cmd>call ShiftTab()<CR>
 
 function! MoveCursorToPlaceholder()
     let c = searchpos("|", "c")
@@ -68,6 +69,14 @@ function! Tab()
         call feedkeys("\<C-n>", "n")
     else " normal tab
         call feedkeys("\<Tab>", "n")
+    endif
+endfunction
+
+function! ShiftTab()
+    if pumvisible()
+	call feedkeys("\<C-p>", "n")
+    else
+	call Tab()
     endif
 endfunction
 

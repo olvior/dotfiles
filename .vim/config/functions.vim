@@ -24,7 +24,7 @@ func! Comment(mode)
 
     " set everything
     for line in range(s_range[0], s_range[0] + s_range[1] - 1)
-		let s = getline(line)
+        let s = getline(line)
 
         if is_commented
             " each one might just have their own size of whitespace
@@ -37,7 +37,7 @@ func! Comment(mode)
 
         call setline(line, s)
     endfor
-endfunction
+endfunc
 
 func! GetSelectionRange(mode)
     if a:mode == 'n'
@@ -52,7 +52,7 @@ func! GetSelectionRange(mode)
     echo "Unknown filetype"
     echo a:mode
     return [0, 0]
-endfunction
+endfunc
 
 func! GetCommentChar()
     if &filetype == 'python'
@@ -65,23 +65,27 @@ func! GetCommentChar()
 
     echo "Unknown filetype for comment"
     return "#"
-endfunction
+endfunc
 
 """
 """ RUNNING
 """
 
 func! Run()
-    exec "w"
+    update
     if &filetype == 'c'
-        exec "!gcc % -o %< && !./%<"
+        execute "!gcc % -o %< && !./%<"
     elseif &filetype == 'cpp'
-        exec "!g++ % -o %< && ./%<"
+        execute "!g++ % -o %< && ./%<"
     elseif &filetype == 'python'
-        exec "!python3 %"
+        execute "!python3.11 %"
+    elseif &filetype == 'java'
+        execute "!java %"
     elseif &filetype == 'rust'
-        exec "!rustc %"
-        exec "!./%<"
+        execute "!rustc %"
+        execute "!./%<"
+    else
+	echo "Filetype not recognised"
     endif
 endfunc
 
@@ -89,11 +93,11 @@ endfunc
 """ SMALLER UTILS
 """
 func! DeleteTrailingSpaces()
-	let c = getcurpos()
-	substitute/\s\+$//e
-	" no snapping
-	call setpos(".", c)
-endfunction
+    let c = getcurpos()
+    substitute/\s\+$//e
+    " no snapping
+    call setpos(".", c)
+endfunc
 
 func! RestoreCursor()
     if line("'\"") <= line("$")
@@ -101,9 +105,43 @@ func! RestoreCursor()
     endif
 endfunc
 
+func! SetCursorPlaceholder()
+    let c = searchpos("|", "c")
+    if c != [0, 0]
+        call setline(c[0], substitute(getline(c[0]), "|", "", ""))
+        call cursor(c)
+    endif
+endfunc
+
+func! LoadTemplate()
+    call deletebufline("", 1, line("$"))
+    let path = expand("~/.vim/templates/template." .. fnamemodify(bufname(), ":e"))
+    let s = readfile(path)
+    call append("$", s)
+
+    call deletebufline("", 1, 1)
+
+    %s/<file>/\=expand("%<")/ge
+
+    startinsert
+    call SetCursorPlaceholder()
+endfunc
+
+func! GetBufferCount()
+    return len(getbufinfo({'buflisted':1}))
+endfunc
+
 func! IndentLogic()
-    if &filetype == 'python'
-        filetype plugin indent on
+	" default to spaces
+    set expandtab
+
+    " if we start with a tab
+    let t = searchpos('^\t', 'n')[0]
+    " if we start with 4 spaces
+    let s = searchpos('^ {4,}', 'n')[0]
+
+    if (t < s) || (t != 0 && s == 0)
+        set noexpandtab
     endif
 endfunc
 
