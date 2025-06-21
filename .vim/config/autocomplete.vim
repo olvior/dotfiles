@@ -24,9 +24,8 @@ if filereadable(snippet_path)
         echoerr "Error parsing snippets.json: " .. v:exception
     endtry
 else
-    let s:snippet_dict = {}
+    let snippet_dict = {}
 endif
-let snippet_dict = get(snippet_dict, &filetype, {})
 
 function! GetWordBeforeCursor()
     return matchstr(strpart(getline("."), 0, col(".") - 1), '\k\+$')
@@ -34,9 +33,11 @@ endfunction
 
 function! ExpandSnippet()
     let trigger = GetWordBeforeCursor()
+    
+    let current_dict = g:snippet_dict->get(&filetype)
 
-    if !has_key(g:snippet_dict, trigger)
-        return
+    if empty(current_dict) || !has_key(current_dict, trigger)
+        return v:false
     endif
 
     " indentation
@@ -44,7 +45,7 @@ function! ExpandSnippet()
     let indent_unit = &expandtab ? repeat(" ", &shiftwidth) : "\t" " not used
 
     " replace
-    let content = deepcopy(g:snippet_dict[trigger])
+    let content = deepcopy(current_dict[trigger])
     let content[0] = strpart(getline("."), 0, col(".") - 1 - strlen(trigger)) .. content[0]
     " format snippet
     for i in range(len(content))
@@ -58,13 +59,15 @@ function! ExpandSnippet()
     call setline(".", content[0])
     call append(".", content[1:])
     call MoveCursorToPlaceholder()
+
+	return v:true
 endfunction
 
 function! Tab()
     if pumvisible() " autocomplete
         call feedkeys("\<C-n>", "n")
-    elseif has_key(g:snippet_dict, GetWordBeforeCursor()) " snippets
-        call ExpandSnippet()
+    elseif ExpandSnippet() " snippets
+		return
     elseif getline(".")[col(".")-2] =~ '\S'
         call feedkeys("\<C-n>", "n")
     else " normal tab
@@ -74,9 +77,11 @@ endfunction
 
 function! ShiftTab()
     if pumvisible()
-	call feedkeys("\<C-p>", "n")
+        call feedkeys("\<C-p>", "n")
+    elseif matchstr(line("."), '^\s{1,}') != ''
+        call feedkeys("\<C-h>", "n")
     else
-	call Tab()
+        call Tab()
     endif
 endfunction
 

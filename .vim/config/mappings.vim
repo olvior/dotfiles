@@ -18,7 +18,7 @@ vnoremap <silent><leader>c :<C-u>call Comment('v')<CR>
 nnoremap <silent><leader>c :call Comment('n')<CR>
 nnoremap <silent><leader>t :call LoadTemplate()<CR>
 
-vnoremap <leader>y "*y
+vnoremap <leader>y "+y
 vnoremap <leader>d "*d
 
 nnoremap <silent><tab> :bn<CR>

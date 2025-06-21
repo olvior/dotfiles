@@ -9,12 +9,17 @@ func! Comment(mode)
     let s_range = GetSelectionRange(a:mode)
 
     " check commented
-    let is_commented = 0
+    let commented = 0
     for i in range(s_range[0], s_range[0] + s_range[1] - 1)
         if !(matchstr(getline(i), '^\s*' .. char) == '')
-            let is_commented = 1
+            let commented += 1
         endif
     endfor
+
+	let is_commented = 0
+	if commented > s_range[1] / 2
+		let is_commented = 1
+	endif
 
     let line = s_range[0]
 
@@ -30,7 +35,7 @@ func! Comment(mode)
             " each one might just have their own size of whitespace
             let whitespace = matchstr(s, '^\s*')
             let s = substitute(s, '^\s*' .. char .. ' ', '', '')
-            let s = whitespace .. substitute(s, '^\s*' .. char, '', '')
+            let s = whitespace .. s " substitute(s, '^\s*' .. char, '', '')
         else
             let s = whitespace .. char .. ' ' .. s[len(whitespace):]
         endif
@@ -55,15 +60,19 @@ func! GetSelectionRange(mode)
 endfunc
 
 func! GetCommentChar()
-    if &filetype == 'python'
+	let f = &filetype
+
+    if f == 'python' || f == 'gdscript'
         return "#"
-    elseif &filetype == 'vim'
+    elseif f == 'vim'
         return "\""
-    elseif &filetype == 'c' || &filetype == 'cpp' || &filetype == 'rust' || &filetype == 'java'
+	elseif f == 'lua'
+		return "--"
+    elseif f == 'c' || f == 'cpp' || f == 'rust' || f == 'java'
         return "//"
     endif
 
-    echo "Unknown filetype for comment"
+    echo "Unknown filetype " .. f .. " for comment"
     return "#"
 endfunc
 
@@ -74,18 +83,20 @@ endfunc
 func! Run()
     update
     if &filetype == 'c'
-        execute "!gcc % -o %< && !./%<"
+        execute "!gcc % -o %< && ./%<"
     elseif &filetype == 'cpp'
         execute "!g++ % -o %< && ./%<"
     elseif &filetype == 'python'
         execute "!python3.11 %"
     elseif &filetype == 'java'
         execute "!java %"
+    elseif &filetype == 'markdown'
+        execute "!pandoc % -o %<.pdf && open %<.pdf"
     elseif &filetype == 'rust'
         execute "!rustc %"
         execute "!./%<"
     else
-	echo "Filetype not recognised"
+	echo "Filetype " .. &filetype .. " not recognised"
     endif
 endfunc
 

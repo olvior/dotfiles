@@ -1,14 +1,16 @@
 " config/settings.vim
 
-" colours
-colorscheme onedark
-
 if $COLORTERM =~? '\v(truecolor|24bit)'
     set termguicolors
 else
     echo "why does your terminal not have true color"
     set notermguicolors
 endif
+
+" colours
+" let g:tokyonight_style = 'storm'
+" let g:tokyonight_enable_italic = 1
+colorscheme tokyonight
 
 " sus only syntax once
 if !exists("g:syntax_on")
