@@ -105,7 +105,7 @@ endfunc
 """
 func! DeleteTrailingSpaces()
     let c = getcurpos()
-    substitute/\s\+$//e
+    %substitute/\s\+$//e
     " no snapping
     call setpos(".", c)
 endfunc

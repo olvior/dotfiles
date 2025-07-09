@@ -21,8 +21,8 @@ nnoremap <silent><leader>t :call LoadTemplate()<CR>
 vnoremap <leader>y "+y
 vnoremap <leader>d "*d
 
-nnoremap <silent><tab> :bn<CR>
-nnoremap <silent><S-tab> :bp<CR>
+nnoremap <silent><tab> :bn<CR>zz
+nnoremap <silent><S-tab> :bp<CR>zz
 
 nnoremap <expr> ZZ GetBufferCount() == 1 ? "ZZ" : ":update<Bar>bdelete<CR>"
 nnoremap <expr> <leader>q GetBufferCount() == 1 ? ":q!<CR>" : ":bdelete!<CR>"

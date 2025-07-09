@@ -25,14 +25,13 @@ func! TabLine()
         let s .= ' '
     endif
 
-    let spaces = '  '
+    let spaces = ' '
 
     " attempt to fit more files in if need be
-    if GetBufferCount() > 5
-    let spaces = ''
-    for i in range(1, 6 - GetBufferCount())
-        let spaces .= ' '
-    endfor
+    if GetBufferCount() < 7
+        for i in range(7 - GetBufferCount())
+            let spaces .= ' '
+        endfor
     endif
 
     for i in range(1, bufnr('$'))
@@ -48,11 +47,11 @@ func! TabLine()
 
             let s .= ' %*'
             if getbufinfo(i)[0].changed
-                let s .= " %#DiffAdd#"
-                let s .= "[+]"
+                let s .= "%#DiffAdd#"
+                let s .= "+"
                 let s .= '%*'
             else
-                let s .= "    "
+                let s .= " "
             endif
             let s .= spaces
         endif

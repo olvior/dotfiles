@@ -72,5 +72,3 @@ set hidden
 let g:netrw_banner=0
 " tree view
 let g:netrw_liststyle=3
-
-
